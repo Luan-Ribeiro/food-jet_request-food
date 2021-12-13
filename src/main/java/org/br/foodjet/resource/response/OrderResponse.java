@@ -1,10 +1,11 @@
 package org.br.foodjet.resource.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.br.foodjet.resource.request.NameFood;
+import org.br.foodjet.resource.common.Item;
+import org.br.foodjet.resource.common.OrderStatus;
 
 @Data
 @AllArgsConstructor
@@ -12,8 +13,10 @@ import org.br.foodjet.resource.request.NameFood;
 public class OrderResponse {
 
     public Long id;
-    public NameFood nameFood;
+    public List<Item> items;
     public String clientName;
     public double value;
+    public OrderStatus status;
     public String createDate;
+    public String lastUpdateDate;
 }

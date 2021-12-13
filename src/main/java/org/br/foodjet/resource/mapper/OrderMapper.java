@@ -8,5 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "cdi")
 public interface OrderMapper {
 
-   List<OrderResponse> toResponse(List<OrderRequest> orderRequest);
+   OrderResponse toResponse(OrderRequest orderRequest);
+
+   List<OrderResponse> toResponseList(List<OrderRequest> orderRequests);
 }
