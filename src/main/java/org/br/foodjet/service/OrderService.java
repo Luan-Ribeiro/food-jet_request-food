@@ -79,7 +79,6 @@ public class OrderService {
         return orderMapper.toResponse(order);
     }
 
-    @Transactional
     public OrderResponse updateOrder(OrderStatus status, Long id) {
         Instant dateNow = Instant.now();
         OrderRequest order = new OrderRequest();
@@ -118,6 +117,18 @@ public class OrderService {
                     break;
                 case CHESSE_BACON:
                     valueFinal = valueFinal + (Constants.CHESSE_BACON * item.quantity);
+                    break;
+                case CHESSE_EGG:
+                    valueFinal = valueFinal + (Constants.CHESSE_EGG * item.quantity);
+                    break;
+                case CHESSE_EGG_SALAD:
+                    valueFinal = valueFinal + (Constants.CHESSE_EGG_SALAD * item.quantity);
+                    break;
+                case CHESSE_PEPPERONI:
+                    valueFinal = valueFinal + (Constants.CHESSE_PEPPERONI * item.quantity);
+                    break;
+                case CHESSE_BAURU:
+                    valueFinal = valueFinal + (Constants.CHESSE_BAURU * item.quantity);
                     break;
                 default:
                     break;
