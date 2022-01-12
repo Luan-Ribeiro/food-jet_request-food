@@ -5,7 +5,7 @@ import org.br.foodjet.resource.request.OrderRequest;
 import org.br.foodjet.resource.response.OrderResponse;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "cdi")
+@Mapper
 public interface OrderMapper {
 
    OrderResponse toResponse(OrderRequest orderRequest);

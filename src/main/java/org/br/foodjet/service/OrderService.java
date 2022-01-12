@@ -1,18 +1,21 @@
 package org.br.foodjet.service;
 
+import io.vertx.core.buffer.Buffer;
+import io.vertx.ext.web.client.HttpResponse;
 import java.time.Instant;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.br.foodjet.conf.Constants;
 import org.br.foodjet.exception.BusinessException;
+import org.br.foodjet.exception.GenericException;
 import org.br.foodjet.resource.common.Item;
 import org.br.foodjet.resource.common.OrderStatus;
 import org.br.foodjet.resource.mapper.OrderMapper;
 import org.br.foodjet.resource.request.OrderRequest;
+import org.br.foodjet.resource.response.ErrorDetailTO;
 import org.br.foodjet.resource.response.OrderResponse;
 
 @Slf4j
@@ -20,8 +23,7 @@ import org.br.foodjet.resource.response.OrderResponse;
 @RequiredArgsConstructor
 public class OrderService {
 
-    @Inject
-    OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
     public List<OrderResponse> listAllOrder() {
         List<OrderRequest> listAll = OrderRequest.findAll().list();
@@ -60,6 +62,7 @@ public class OrderService {
         }
 
         Instant dateNow = Instant.now();
+        //TODO test transactional
         try {
             //TODO Remove before have the other MS
             OrderStatus statusVerified = verifyOrderStatus(order);
@@ -81,23 +84,19 @@ public class OrderService {
 
     public OrderResponse updateOrder(OrderStatus status, Long id) {
         Instant dateNow = Instant.now();
-        OrderRequest order = new OrderRequest();
         if (status == null || id == null) {
             return null;
         }
 
-        try {
-            order = OrderRequest.findById(id);
-            if (order == null) {
-                throw new BusinessException("Resource not find");
-            }
-
-            order.setStatus(OrderStatus.FINALIZED);
-            order.setLastUpdateDate(dateNow.toString());
-            order.persist();
-        } catch (Exception ex) {
-            log.info(ex.getMessage());
+        OrderRequest order = OrderRequest.findById(id);
+        if (order == null) {
+            throw new BusinessException("Resource not found");
         }
+
+        order.setStatus(OrderStatus.FINALIZED);
+        order.setLastUpdateDate(dateNow.toString());
+        order.persist();
+
         return orderMapper.toResponse(order);
     }
 
@@ -143,12 +142,27 @@ public class OrderService {
     }
 
     private void persistItems(List<Item> items) {
-        if (items == null) {
-            return;
-        }
+        try {
+            if (items == null) {
+                return;
+            }
 
-        for (Item item : items) {
-            item.persist();
+            for (Item item : items) {
+                item.persist();
+            }
+        }catch (Exception ex){
+//            handleHttpResponse();
+        }
+    }
+
+    private void handleHttpResponse(HttpResponse<Buffer> response, String path) {
+        if (response.statusCode() != 200) {
+            var errorDetailTO = response.bodyAsJson(ErrorDetailTO.class);
+
+            throw new GenericException(
+                "Integration failed with dlocalbank-pixkey for " + path,
+                errorDetailTO
+            );
         }
     }
 }

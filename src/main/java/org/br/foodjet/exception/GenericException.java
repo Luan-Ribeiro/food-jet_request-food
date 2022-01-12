@@ -2,18 +2,18 @@ package org.br.foodjet.exception;
 
 import org.br.foodjet.resource.response.ErrorDetailTO;
 
-public class BusinessException extends RuntimeException {
+public class GenericException extends RuntimeException {
 
     ErrorDetailTO error;
 
-    public BusinessException() {
+    public GenericException() {
     }
 
-    public BusinessException(String message) {
+    public GenericException(String message) {
         super(message);
     }
 
-    public BusinessException(String message, ErrorDetailTO errorDTO) {
+    public GenericException(String message, ErrorDetailTO errorDTO) {
         super(message);
         this.error = errorDTO;
     }

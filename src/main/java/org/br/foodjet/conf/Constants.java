@@ -1,6 +1,7 @@
 package org.br.foodjet.conf;
 
 public interface Constants {
+
     double CHESSE_COMPLETED = 7;
     double CHESSE_SALAD = 3;
     double CHESSE_BACON = 4;

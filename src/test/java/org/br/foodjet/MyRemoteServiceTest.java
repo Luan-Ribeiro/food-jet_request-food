@@ -1,22 +1,19 @@
 package org.br.foodjet;
 
 import io.quarkus.test.junit.QuarkusTest;
+import javax.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-import java.util.Set;
-
-@QuarkusTest
-public class MyRemoteServiceTest {
-
-    @Inject
-    @RestClient
-  //  MyRemoteService myRemoteService;
-
-    @Test
-    public void testExtensionsRestClientEndpoint() {
+//@QuarkusTest
+//public class MyRemoteServiceTest {
+//
+//    @Inject
+//    @RestClient
+//    MyRemoteService myRemoteService;
+//
+//    @Test
+//    public void testExtensionsRestClientEndpoint() {
  //       Set<MyRemoteService.Extension> restClientExtensions = myRemoteService.getExtensionsById("io.quarkus:quarkus-rest-client");
 
  //       Assertions.assertEquals(1, restClientExtensions.size());
@@ -27,5 +24,5 @@ public class MyRemoteServiceTest {
 //            Assertions.assertTrue(extension.keywords.size() > 1);
 //            Assertions.assertTrue(extension.keywords.contains("rest-client"));
 //        }
-    }
-}
+//    }
+//}
