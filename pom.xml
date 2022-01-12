@@ -103,6 +103,12 @@
             <version>1.4.2.Final</version>
         </dependency>
         <dependency>
+            <artifactId>mapstruct-processor</artifactId>
+            <groupId>org.mapstruct</groupId>
+            <scope>provided</scope>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.smallrye</groupId>
             <artifactId>smallrye-open-api-core</artifactId>
         </dependency>
@@ -139,16 +145,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
                 <configuration>
-                    <parameters>${maven.compiler.parameters}</parameters>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>1.4.2.Final</version>
-                        </path>
-                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>
+                            -Amapstruct.defaultComponentModel=cdi
+                        </compilerArg>
+                        <compilerArg>
+                            -Amapstruct.defaultInjectionStrategy=constructor
+                        </compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
