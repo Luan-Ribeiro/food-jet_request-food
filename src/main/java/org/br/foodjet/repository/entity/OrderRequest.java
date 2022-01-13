@@ -1,4 +1,4 @@
-package org.br.foodjet.resource.request;
+package org.br.foodjet.repository.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -15,11 +15,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.transaction.Transactional;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.br.foodjet.resource.common.Item;
 import org.br.foodjet.resource.common.OrderStatus;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Transactional
 @Data

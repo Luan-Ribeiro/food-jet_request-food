@@ -14,9 +14,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import org.br.foodjet.resource.common.OrderStatus;
-import org.br.foodjet.resource.request.OrderRequest;
+import org.br.foodjet.repository.entity.OrderRequest;
 import org.br.foodjet.resource.response.OrderResponse;
-import org.br.foodjet.service.OrderService;
+import org.br.foodjet.service.Service;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -30,7 +30,7 @@ import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 public class OrderResource {
 
     @Inject
-    OrderService orderService;
+    Service service;
 
     @GET
     @Path("/all")
@@ -45,7 +45,7 @@ public class OrderResource {
     @APIResponse(responseCode = "500", description = "Internal server error")
     @APIResponse(responseCode = "502", description = "Bad gateway")
     public List<OrderResponse> listAllRequestsFoods() {
-        return orderService.listAllOrder();
+        return service.listAllOrder();
     }
 
     @GET
@@ -61,7 +61,7 @@ public class OrderResource {
     @APIResponse(responseCode = "500", description = "Internal server error")
     @APIResponse(responseCode = "502", description = "Bad gateway")
     public OrderResponse findById(@PathParam("id") Long id) {
-        return orderService.findById(id);
+        return service.findById(id);
     }
 
     @GET
@@ -76,7 +76,7 @@ public class OrderResource {
     @APIResponse(responseCode = "502", description = "Bad gateway")
     @Tag(name = "Order", description = "FoodJet")
     public List<OrderResponse> listByName(@Valid @NotBlank @QueryParam("client_name") String clientName) {
-        return orderService.findByName(clientName);
+        return service.findByName(clientName);
     }
 
     @POST
@@ -91,7 +91,7 @@ public class OrderResource {
     @APIResponse(responseCode = "500", description = "Internal server error")
     @APIResponse(responseCode = "502", description = "Bad gateway")
     public OrderResponse create(OrderRequest order) {
-        return orderService.createOrder(order);
+        return service.createOrder(order);
     }
 
     @PATCH
@@ -108,6 +108,6 @@ public class OrderResource {
     @APIResponse(responseCode = "502", description = "Bad gateway")
     public OrderResponse update(@Valid @NotNull @PathParam("id") Long id,
         @NotNull @QueryParam("status") OrderStatus status) {
-        return orderService.updateOrder(status, id);
+        return service.updateOrder(status, id);
     }
 }

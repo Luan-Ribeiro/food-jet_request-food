@@ -11,23 +11,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.br.foodjet.conf.Constants;
 import org.br.foodjet.exception.BusinessException;
 import org.br.foodjet.exception.GenericException;
+import org.br.foodjet.repository.Repository;
 import org.br.foodjet.resource.common.Item;
 import org.br.foodjet.resource.common.OrderStatus;
-import org.br.foodjet.resource.mapper.OrderMapper;
-import org.br.foodjet.resource.request.OrderRequest;
+import org.br.foodjet.resource.mapper.Mapper;
+import org.br.foodjet.repository.entity.OrderRequest;
 import org.br.foodjet.resource.response.ErrorDetailTO;
 import org.br.foodjet.resource.response.OrderResponse;
 
 @Slf4j
 @ApplicationScoped
 @RequiredArgsConstructor
-public class OrderService {
+public class Service {
 
-    private final OrderMapper orderMapper;
+    private final Mapper mapper;
+
+    private final Repository repository;
 
     public List<OrderResponse> listAllOrder() {
-        List<OrderRequest> listAll = OrderRequest.findAll().list();
-        return orderMapper.toResponseList(listAll);
+        return mapper.toResponseList(repository.listAll());
     }
 
     public List<OrderResponse> findByName(String clientName) {
@@ -35,12 +37,12 @@ public class OrderService {
             return null;
         }
 
-        List<OrderRequest> listName = OrderRequest.find("client_name", clientName).list();
+        List<OrderRequest> listName = repository.findByName(clientName);
         if (listName.size() == 0) {
             throw new BusinessException("Resources not found");
         }
 
-        return orderMapper.toResponseList(listName);
+        return mapper.toResponseList(listName);
     }
 
     public OrderResponse findById(Long id) {
@@ -48,11 +50,11 @@ public class OrderService {
             return null;
         }
 
-        OrderRequest order = OrderRequest.findById(id);
+        OrderRequest order = repository.findById(id);
         if (order == null) {
-            throw new BusinessException("Resource not found");
+            throw new BusinessException("OrderResource not found");
         }
-        return orderMapper.toResponse(order);
+        return mapper.toResponse(order);
     }
 
     @Transactional
@@ -74,12 +76,11 @@ public class OrderService {
             order.setLastUpdateDate(dateNow.toString());
             order.setValue(calculateValueToOrder(order.items));
             order.setStatus(statusVerified);
-            order.persist();
-            persistItems(order.items);
+            repository.save(order);
         } catch (Exception ex) {
             log.info(ex.getMessage());
         }
-        return orderMapper.toResponse(order);
+        return mapper.toResponse(order);
     }
 
     public OrderResponse updateOrder(OrderStatus status, Long id) {
@@ -90,14 +91,14 @@ public class OrderService {
 
         OrderRequest order = OrderRequest.findById(id);
         if (order == null) {
-            throw new BusinessException("Resource not found");
+            throw new BusinessException("OrderResource not found");
         }
 
         order.setStatus(OrderStatus.FINALIZED);
         order.setLastUpdateDate(dateNow.toString());
-        order.persist();
+        repository.update(order);
 
-        return orderMapper.toResponse(order);
+        return mapper.toResponse(order);
     }
 
     private double calculateValueToOrder(List<Item> items) {
@@ -139,20 +140,6 @@ public class OrderService {
     private OrderStatus verifyOrderStatus(OrderRequest order) {
         //TODO verify if call to other micro service will be here
         return OrderStatus.ACCEPTED;
-    }
-
-    private void persistItems(List<Item> items) {
-        try {
-            if (items == null) {
-                return;
-            }
-
-            for (Item item : items) {
-                item.persist();
-            }
-        }catch (Exception ex){
-//            handleHttpResponse();
-        }
     }
 
     private void handleHttpResponse(HttpResponse<Buffer> response, String path) {
