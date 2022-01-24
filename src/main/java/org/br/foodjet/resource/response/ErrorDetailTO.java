@@ -10,18 +10,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @RegisterForReflection
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(example = """
-    {
-      "code": "dlocalbank-bpp-integrator-14004",
-      "message": "A chave informada não foi encontrada.",
-      "errors": [
-        {
-          "code": "PixAddressing-004",
-          "message": "A chave informada não foi encontrada."
-        }
-      ]
-    }
-    """)
 public class ErrorDetailTO {
 
     private String code;

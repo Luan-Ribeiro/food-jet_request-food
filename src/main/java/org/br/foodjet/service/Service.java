@@ -148,7 +148,7 @@ public class Service {
             var errorDetailTO = response.bodyAsJson(ErrorDetailTO.class);
 
             throw new GenericException(
-                "Integration failed with dlocalbank-pixkey for " + path,
+                "Integration failed with inventoryfood for " + path,
                 errorDetailTO
             );
         }
