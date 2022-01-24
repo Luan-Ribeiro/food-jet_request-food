@@ -29,13 +29,13 @@ public class Repository {
 
     public void save(OrderRequest order) {
         log.info("Save Order : {}", order);
-        order.persistAndFlush();
+        order.persist();
         persistItems(order.items);
     }
 
     public void update(OrderRequest order) {
         log.info("Update Order : {}", order);
-        order.persist();
+        order.persistAndFlush();
     }
 
     private void persistItems(List<Item> items) {
@@ -45,7 +45,7 @@ public class Repository {
             }
 
             for (Item item : items) {
-                item.persistAndFlush();
+                item.persist();
             }
         } catch (Exception ex) {
 //            handleHttpResponse();

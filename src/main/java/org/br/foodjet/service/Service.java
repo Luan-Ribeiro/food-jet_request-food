@@ -83,6 +83,7 @@ public class Service {
         return mapper.toResponse(order);
     }
 
+    @Transactional
     public OrderResponse updateOrder(OrderStatus status, Long id) {
         Instant dateNow = Instant.now();
         if (status == null || id == null) {
