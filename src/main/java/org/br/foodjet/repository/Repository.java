@@ -5,7 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.br.foodjet.repository.entity.OrderRequest;
-import org.br.foodjet.resource.common.Item;
+import org.br.foodjet.repository.entity.Item;
 
 @Slf4j
 @ApplicationScoped
@@ -30,7 +30,7 @@ public class Repository {
     public void save(OrderRequest order) {
         log.info("Save Order : {}", order);
         order.persist();
-        persistItems(order.items);
+        persistItems(order.getItems());
     }
 
     public void update(OrderRequest order) {

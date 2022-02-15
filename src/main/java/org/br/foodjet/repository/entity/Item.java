@@ -1,4 +1,4 @@
-package org.br.foodjet.resource.common;
+package org.br.foodjet.repository.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -10,7 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Data;
+import org.br.foodjet.constant.NameFoodEnum;
 
+@Data
 @Entity
 @Table(name = "item")
 public class Item extends PanacheEntityBase {
@@ -22,7 +25,8 @@ public class Item extends PanacheEntityBase {
 
     @Column(name = "name_food")
     @Enumerated(EnumType.STRING)
-    public NameFood nameFood;
+    private NameFoodEnum nameFood;
 
-    public Long quantity;
+    @Column(name = "quantity")
+    private Long quantity;
 }

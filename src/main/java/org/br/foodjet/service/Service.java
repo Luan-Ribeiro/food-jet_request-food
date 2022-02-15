@@ -8,12 +8,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.br.foodjet.conf.Constants;
+import org.br.foodjet.constant.Constants;
+import org.br.foodjet.constant.OrderStatusEnum;
 import org.br.foodjet.exception.BusinessException;
 import org.br.foodjet.exception.GenericException;
 import org.br.foodjet.repository.Repository;
-import org.br.foodjet.resource.common.Item;
-import org.br.foodjet.resource.common.OrderStatus;
+import org.br.foodjet.repository.entity.Item;
 import org.br.foodjet.resource.mapper.Mapper;
 import org.br.foodjet.repository.entity.OrderRequest;
 import org.br.foodjet.resource.response.ErrorDetailTO;
@@ -67,14 +67,14 @@ public class Service {
         //TODO test transactional
         try {
             //TODO Remove before have the other MS
-            OrderStatus statusVerified = verifyOrderStatus(order);
-            if (statusVerified == null || statusVerified == OrderStatus.RECUSED) {
+            OrderStatusEnum statusVerified = verifyOrderStatus(order);
+            if (statusVerified == null || statusVerified == OrderStatusEnum.RECUSED) {
                 throw new BusinessException("Order was refused by lack of ingredients");
             }
 
             order.setCreateDate(dateNow.toString());
             order.setLastUpdateDate(dateNow.toString());
-            order.setValue(calculateValueToOrder(order.items));
+            order.setValue(calculateValueToOrder(order.getItems()));
             order.setStatus(statusVerified);
             repository.save(order);
         } catch (Exception ex) {
@@ -84,7 +84,7 @@ public class Service {
     }
 
     @Transactional
-    public OrderResponse updateOrder(OrderStatus status, Long id) {
+    public OrderResponse updateOrder(OrderStatusEnum status, Long id) {
         Instant dateNow = Instant.now();
         if (status == null || id == null) {
             return null;
@@ -95,7 +95,7 @@ public class Service {
             throw new BusinessException("OrderResource not found");
         }
 
-        order.setStatus(OrderStatus.FINALIZED);
+        order.setStatus(OrderStatusEnum.FINALIZED);
         order.setLastUpdateDate(dateNow.toString());
         repository.update(order);
 
@@ -109,27 +109,27 @@ public class Service {
 
         double valueFinal = 0;
         for (Item item : items) {
-            switch (item.nameFood) {
+            switch (item.getNameFood()) {
                 case CHESSE_COMPLETED:
-                    valueFinal = valueFinal + (Constants.CHESSE_COMPLETED * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_COMPLETED * item.getQuantity());
                     break;
                 case CHESSE_SALAD:
-                    valueFinal = valueFinal + (Constants.CHESSE_SALAD * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_SALAD * item.getQuantity());
                     break;
                 case CHESSE_BACON:
-                    valueFinal = valueFinal + (Constants.CHESSE_BACON * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_BACON * item.getQuantity());
                     break;
                 case CHESSE_EGG:
-                    valueFinal = valueFinal + (Constants.CHESSE_EGG * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_EGG * item.getQuantity());
                     break;
                 case CHESSE_EGG_SALAD:
-                    valueFinal = valueFinal + (Constants.CHESSE_EGG_SALAD * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_EGG_SALAD * item.getQuantity());
                     break;
                 case CHESSE_PEPPERONI:
-                    valueFinal = valueFinal + (Constants.CHESSE_PEPPERONI * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_PEPPERONI * item.getQuantity());
                     break;
                 case CHESSE_BAURU:
-                    valueFinal = valueFinal + (Constants.CHESSE_BAURU * item.quantity);
+                    valueFinal = valueFinal + (Constants.CHESSE_BAURU * item.getQuantity());
                     break;
                 default:
                     break;
@@ -138,9 +138,9 @@ public class Service {
         return valueFinal;
     }
 
-    private OrderStatus verifyOrderStatus(OrderRequest order) {
+    private OrderStatusEnum verifyOrderStatus(OrderRequest order) {
         //TODO verify if call to other micro service will be here
-        return OrderStatus.ACCEPTED;
+        return OrderStatusEnum.ACCEPTED;
     }
 
     private void handleHttpResponse(HttpResponse<Buffer> response, String path) {

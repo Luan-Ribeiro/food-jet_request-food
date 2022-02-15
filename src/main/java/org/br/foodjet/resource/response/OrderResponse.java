@@ -4,19 +4,20 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.br.foodjet.resource.common.Item;
-import org.br.foodjet.resource.common.OrderStatus;
+import org.br.foodjet.repository.entity.Item;
+import org.br.foodjet.constant.OrderStatusEnum;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderResponse {
 
-    public Long id;
-    public List<Item> items;
-    public String clientName;
-    public double value;
-    public OrderStatus status;
-    public String createDate;
-    public String lastUpdateDate;
+    private Long id;
+    private List<Item> items;
+    private String clientName;
+    private double value;
+    private OrderStatusEnum status;
+    private String unity;
+    private String createDate;
+    private String lastUpdateDate;
 }

@@ -1,4 +1,4 @@
-package org.br.foodjet.conf;
+package org.br.foodjet.constant;
 
 public interface Constants {
 

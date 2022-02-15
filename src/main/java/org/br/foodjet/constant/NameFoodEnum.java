@@ -1,6 +1,6 @@
-package org.br.foodjet.resource.common;
+package org.br.foodjet.constant;
 
-public enum NameFood {
+public enum NameFoodEnum {
     CHESSE_COMPLETED,
     CHESSE_SALAD,
     CHESSE_BACON,

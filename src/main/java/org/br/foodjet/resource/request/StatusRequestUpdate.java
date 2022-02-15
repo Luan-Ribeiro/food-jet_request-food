@@ -5,7 +5,7 @@ import javax.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.br.foodjet.resource.common.OrderStatus;
+import org.br.foodjet.constant.OrderStatusEnum;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +13,5 @@ import org.br.foodjet.resource.common.OrderStatus;
 public class StatusRequestUpdate {
 
     @Enumerated(EnumType.STRING)
-    public OrderStatus status;
+    private OrderStatusEnum status;
 }

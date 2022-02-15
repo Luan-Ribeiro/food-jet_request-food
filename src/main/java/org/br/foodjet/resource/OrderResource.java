@@ -3,7 +3,6 @@ package org.br.foodjet.resource;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.util.List;
-import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,7 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.br.foodjet.resource.common.OrderStatus;
+import org.br.foodjet.constant.OrderStatusEnum;
 import org.br.foodjet.repository.entity.OrderRequest;
 import org.br.foodjet.resource.response.OrderResponse;
 import org.br.foodjet.service.Service;
@@ -45,8 +44,6 @@ public class OrderResource {
             schema = @Schema(implementation = OrderResponse.class)
         )
     )
-    @APIResponse(responseCode = "500", description = "Internal server error")
-    @APIResponse(responseCode = "502", description = "Bad gateway")
     public List<OrderResponse> listAllRequestsFoods() {
         return service.listAllOrder();
     }
@@ -61,8 +58,6 @@ public class OrderResource {
             schema = @Schema(implementation = OrderResponse.class)
         )
     )
-    @APIResponse(responseCode = "500", description = "Internal server error")
-    @APIResponse(responseCode = "502", description = "Bad gateway")
     public OrderResponse findById(@PathParam("id") Long id) {
         return service.findById(id);
     }
@@ -75,8 +70,6 @@ public class OrderResource {
             schema = @Schema(implementation = OrderResponse.class)
         )
     )
-    @APIResponse(responseCode = "500", description = "Internal server error")
-    @APIResponse(responseCode = "502", description = "Bad gateway")
     @Tag(name = "Order", description = "FoodJet")
     public List<OrderResponse> listByName(@Valid @NotBlank @QueryParam("client_name") String clientName) {
         return service.findByName(clientName);
@@ -91,7 +84,6 @@ public class OrderResource {
             schema = @Schema(implementation = OrderResponse.class)
         )
     )
-    @APIResponse(responseCode = "500", description = "Internal server error")
     @ResponseStatus(value = HttpStatus.SC_CREATED)
     public OrderResponse create(OrderRequest order) {
         return service.createOrder(order);
@@ -107,10 +99,8 @@ public class OrderResource {
             schema = @Schema(implementation = OrderResponse.class)
         )
     )
-    @APIResponse(responseCode = "500", description = "Internal server error")
-    @APIResponse(responseCode = "502", description = "Bad gateway")
     public OrderResponse update(@Valid @NotNull @PathParam("id") Long id,
-        @NotNull @QueryParam("status") OrderStatus status) {
+        @NotNull @QueryParam("status") OrderStatusEnum status) {
         return service.updateOrder(status, id);
     }
 }
