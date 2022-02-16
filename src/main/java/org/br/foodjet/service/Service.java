@@ -12,10 +12,11 @@ import org.br.foodjet.constant.Constants;
 import org.br.foodjet.constant.OrderStatusEnum;
 import org.br.foodjet.exception.BusinessException;
 import org.br.foodjet.exception.GenericException;
+import org.br.foodjet.integration.InventoryResource;
 import org.br.foodjet.repository.Repository;
 import org.br.foodjet.repository.entity.Item;
-import org.br.foodjet.resource.mapper.Mapper;
 import org.br.foodjet.repository.entity.OrderRequest;
+import org.br.foodjet.resource.mapper.Mapper;
 import org.br.foodjet.resource.response.ErrorDetailTO;
 import org.br.foodjet.resource.response.OrderResponse;
 
@@ -25,8 +26,8 @@ import org.br.foodjet.resource.response.OrderResponse;
 public class Service {
 
     private final Mapper mapper;
-
     private final Repository repository;
+    private final InventoryResource inventoryResource;
 
     public List<OrderResponse> listAllOrder() {
         return mapper.toResponseList(repository.listAll());
@@ -54,7 +55,7 @@ public class Service {
         if (order == null) {
             throw new BusinessException("OrderResource not found");
         }
-        return mapper.toResponse(order);
+        return mapper.requestToResponse(order);
     }
 
     @Transactional
@@ -64,23 +65,19 @@ public class Service {
         }
 
         Instant dateNow = Instant.now();
-        //TODO test transactional
-        try {
-            //TODO Remove before have the other MS
-            OrderStatusEnum statusVerified = verifyOrderStatus(order);
-            if (statusVerified == null || statusVerified == OrderStatusEnum.RECUSED) {
-                throw new BusinessException("Order was refused by lack of ingredients");
-            }
-
-            order.setCreateDate(dateNow.toString());
-            order.setLastUpdateDate(dateNow.toString());
-            order.setValue(calculateValueToOrder(order.getItems()));
-            order.setStatus(statusVerified);
-            repository.save(order);
-        } catch (Exception ex) {
-            log.info(ex.getMessage());
+        OrderStatusEnum statusVerified = inventoryResource.verifyOrderAndFlushIngredients(mapper.toRequestTO(order))
+            .getStatus();
+        if (statusVerified == null || statusVerified == OrderStatusEnum.RECUSED) {
+            throw new BusinessException("Order was refused by lack of ingredients");
         }
-        return mapper.toResponse(order);
+
+        order.setCreateDate(dateNow.toString());
+        order.setLastUpdateDate(dateNow.toString());
+        order.setValue(calculateValueToOrder(order.getItems()));
+        order.setStatus(statusVerified);
+        repository.save(order);
+
+        return mapper.requestToResponse(order);
     }
 
     @Transactional
@@ -99,7 +96,7 @@ public class Service {
         order.setLastUpdateDate(dateNow.toString());
         repository.update(order);
 
-        return mapper.toResponse(order);
+        return mapper.requestToResponse(order);
     }
 
     private double calculateValueToOrder(List<Item> items) {
@@ -136,11 +133,6 @@ public class Service {
             }
         }
         return valueFinal;
-    }
-
-    private OrderStatusEnum verifyOrderStatus(OrderRequest order) {
-        //TODO verify if call to other micro service will be here
-        return OrderStatusEnum.ACCEPTED;
     }
 
     private void handleHttpResponse(HttpResponse<Buffer> response, String path) {
