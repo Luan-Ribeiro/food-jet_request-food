@@ -17,4 +17,8 @@ public class BusinessException extends RuntimeException {
         super(message);
         this.error = errorDTO;
     }
+
+    public BusinessException(String message, String type) {
+
+    }
 }

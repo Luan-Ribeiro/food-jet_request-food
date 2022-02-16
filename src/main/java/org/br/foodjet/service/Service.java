@@ -3,15 +3,18 @@ package org.br.foodjet.service;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.ext.web.client.HttpResponse;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.br.foodjet.constant.Constants;
 import org.br.foodjet.constant.OrderStatusEnum;
 import org.br.foodjet.exception.BusinessException;
 import org.br.foodjet.exception.GenericException;
+import org.br.foodjet.integration.BurguerResource;
 import org.br.foodjet.integration.InventoryResource;
 import org.br.foodjet.repository.Repository;
 import org.br.foodjet.repository.entity.Item;
@@ -28,6 +31,8 @@ public class Service {
     private final Mapper mapper;
     private final Repository repository;
     private final InventoryResource inventoryResource;
+    private final BurguerResource burguerResource;
+    Map<String, Double> resultsOnCache = new HashMap<>();
 
     public List<OrderResponse> listAllOrder() {
         return mapper.toResponseList(repository.listAll());
@@ -67,7 +72,7 @@ public class Service {
         Instant dateNow = Instant.now();
         OrderStatusEnum statusVerified = inventoryResource.verifyOrderAndFlushIngredients(mapper.toRequestTO(order))
             .getStatus();
-        if (statusVerified == null || statusVerified == OrderStatusEnum.RECUSED) {
+        if (Objects.isNull(statusVerified) || statusVerified.equals(OrderStatusEnum.RECUSED)) {
             throw new BusinessException("Order was refused by lack of ingredients");
         }
 
@@ -80,57 +85,30 @@ public class Service {
         return mapper.requestToResponse(order);
     }
 
-    @Transactional
-    public OrderResponse updateOrder(OrderStatusEnum status, Long id) {
-        Instant dateNow = Instant.now();
-        if (status == null || id == null) {
-            return null;
-        }
-
-        OrderRequest order = OrderRequest.findById(id);
-        if (order == null) {
-            throw new BusinessException("OrderResource not found");
-        }
-
-        order.setStatus(OrderStatusEnum.FINALIZED);
-        order.setLastUpdateDate(dateNow.toString());
-        repository.update(order);
-
-        return mapper.requestToResponse(order);
-    }
-
     private double calculateValueToOrder(List<Item> items) {
         if (items == null) {
             return 0;
         }
 
-        double valueFinal = 0;
+        double valueFinal = 0.0;
+
         for (Item item : items) {
-            switch (item.getNameFood()) {
-                case CHESSE_COMPLETED:
-                    valueFinal = valueFinal + (Constants.CHESSE_COMPLETED * item.getQuantity());
-                    break;
-                case CHESSE_SALAD:
-                    valueFinal = valueFinal + (Constants.CHESSE_SALAD * item.getQuantity());
-                    break;
-                case CHESSE_BACON:
-                    valueFinal = valueFinal + (Constants.CHESSE_BACON * item.getQuantity());
-                    break;
-                case CHESSE_EGG:
-                    valueFinal = valueFinal + (Constants.CHESSE_EGG * item.getQuantity());
-                    break;
-                case CHESSE_EGG_SALAD:
-                    valueFinal = valueFinal + (Constants.CHESSE_EGG_SALAD * item.getQuantity());
-                    break;
-                case CHESSE_PEPPERONI:
-                    valueFinal = valueFinal + (Constants.CHESSE_PEPPERONI * item.getQuantity());
-                    break;
-                case CHESSE_BAURU:
-                    valueFinal = valueFinal + (Constants.CHESSE_BAURU * item.getQuantity());
-                    break;
-                default:
-                    break;
+            Double valueBurguer;
+            var nameBurguer = item.getNameFood();
+
+            if (resultsOnCache.isEmpty() || Objects.isNull(resultsOnCache.get(nameBurguer))) {
+                valueBurguer =
+                    Objects.nonNull(burguerResource.findByName(nameBurguer)) ? burguerResource.findByName(nameBurguer)
+                        .getValue() : null;
+                if (Objects.isNull(valueBurguer)) {
+                    throw new BusinessException("Burguer name not found: {}", nameBurguer);
+                }
+                resultsOnCache.put(nameBurguer, valueBurguer);
+            } else {
+                valueBurguer = resultsOnCache.get(nameBurguer);
             }
+
+            valueFinal = valueFinal + (valueBurguer * (item.getQuantity()));
         }
         return valueFinal;
     }
@@ -145,4 +123,23 @@ public class Service {
             );
         }
     }
+
+    //    @Transactional
+//    public OrderResponse updateOrder(OrderStatusEnum status, Long id) {
+//        Instant dateNow = Instant.now();
+//        if (status == null || id == null) {
+//            return null;
+//        }
+//
+//        OrderRequest order = OrderRequest.findById(id);
+//        if (order == null) {
+//            throw new BusinessException("OrderResource not found");
+//        }
+//
+//        order.setStatus(OrderStatusEnum.FINALIZED);
+//        order.setLastUpdateDate(dateNow.toString());
+//        repository.update(order);
+//
+//        return mapper.requestToResponse(order);
+//    }
 }

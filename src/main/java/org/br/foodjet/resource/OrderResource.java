@@ -89,18 +89,18 @@ public class OrderResource {
         return service.createOrder(order);
     }
 
-    @PATCH
-    @Path("/{id}")
-    @Tag(name = "Order", description = "FoodJet")
-    @APIResponse(
-        responseCode = "200",
-        content = @Content(
-            mediaType = APPLICATION_JSON,
-            schema = @Schema(implementation = OrderResponse.class)
-        )
-    )
-    public OrderResponse update(@Valid @NotNull @PathParam("id") Long id,
-        @NotNull @QueryParam("status") OrderStatusEnum status) {
-        return service.updateOrder(status, id);
-    }
+//    @PATCH
+//    @Path("/{id}")
+//    @Tag(name = "Order", description = "FoodJet")
+//    @APIResponse(
+//        responseCode = "200",
+//        content = @Content(
+//            mediaType = APPLICATION_JSON,
+//            schema = @Schema(implementation = OrderResponse.class)
+//        )
+//    )
+//    public OrderResponse update(@Valid @NotNull @PathParam("id") Long id,
+//        @NotNull @QueryParam("status") OrderStatusEnum status) {
+//        return service.updateOrder(status, id);
+//    }
 }

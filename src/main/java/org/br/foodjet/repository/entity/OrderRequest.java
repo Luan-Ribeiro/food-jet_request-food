@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +20,7 @@ import org.br.foodjet.constant.OrderStatusEnum;
 
 @Data
 @Entity
+@Transactional
 @Table(name = "order_request")
 public class OrderRequest extends PanacheEntityBase {
 
@@ -46,7 +48,7 @@ public class OrderRequest extends PanacheEntityBase {
     @Column(name = "last_update_date")
     private String lastUpdateDate;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private List<Item> items;
 

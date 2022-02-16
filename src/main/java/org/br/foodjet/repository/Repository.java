@@ -2,6 +2,7 @@ package org.br.foodjet.repository;
 
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.br.foodjet.repository.entity.OrderRequest;
@@ -10,6 +11,7 @@ import org.br.foodjet.repository.entity.Item;
 @Slf4j
 @ApplicationScoped
 @AllArgsConstructor
+@Transactional
 public class Repository {
 
     public List<OrderRequest> listAll() {

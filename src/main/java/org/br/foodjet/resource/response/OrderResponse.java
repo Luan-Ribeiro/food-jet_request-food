@@ -17,7 +17,6 @@ public class OrderResponse {
     private String clientName;
     private double value;
     private OrderStatusEnum status;
-    private String unity;
     private String createDate;
     private String lastUpdateDate;
 }
