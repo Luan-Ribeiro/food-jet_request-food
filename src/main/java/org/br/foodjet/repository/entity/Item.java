@@ -2,6 +2,7 @@ package org.br.foodjet.repository.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import java.math.BigInteger;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,5 +27,5 @@ public class Item extends PanacheEntityBase {
     private String nameFood;
 
     @Column(name = "quantity")
-    private Long quantity;
+    private BigInteger quantity;
 }

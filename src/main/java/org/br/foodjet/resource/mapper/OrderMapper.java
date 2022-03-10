@@ -6,7 +6,7 @@ import org.br.foodjet.resource.response.OrderResponse;
 import org.br.foodjet.resource.to.OrderRequestTO;
 
 @org.mapstruct.Mapper
-public interface Mapper {
+public interface OrderMapper {
 
     OrderResponse requestToResponse(OrderRequest orderRequest);
 

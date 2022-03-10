@@ -2,6 +2,7 @@ package org.br.foodjet.repository.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +34,7 @@ public class OrderRequest extends PanacheEntityBase {
     private String clientName;
 
     @JsonIgnore
-    private double value;
+    private BigDecimal value;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

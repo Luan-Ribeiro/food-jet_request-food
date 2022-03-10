@@ -5,14 +5,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.br.foodjet.repository.entity.OrderRequest;
 import org.br.foodjet.repository.entity.Item;
+import org.br.foodjet.repository.entity.OrderRequest;
 
 @Slf4j
 @ApplicationScoped
 @AllArgsConstructor
 @Transactional
-public class Repository {
+public class OrderRepository {
 
     public List<OrderRequest> listAll() {
         return OrderRequest.findAll().list();
@@ -29,10 +29,9 @@ public class Repository {
         return OrderRequest.findById(id);
     }
 
-    public void save(OrderRequest order) {
+    public void saveOrder(OrderRequest order) {
         log.info("Save Order : {}", order);
         order.persist();
-        persistItems(order.getItems());
     }
 
     public void update(OrderRequest order) {
@@ -40,17 +39,11 @@ public class Repository {
         order.persistAndFlush();
     }
 
-    private void persistItems(List<Item> items) {
-        try {
-            if (items == null) {
-                return;
-            }
-
-            for (Item item : items) {
-                item.persist();
-            }
-        } catch (Exception ex) {
-//            handleHttpResponse();
+    public void saveItemsOrder(List<Item> items) {
+        if (items == null) {
+            return;
         }
+
+        items.forEach(item -> item.persist());
     }
 }
