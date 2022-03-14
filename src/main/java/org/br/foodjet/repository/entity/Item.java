@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -23,9 +25,11 @@ public class Item extends PanacheEntityBase {
     @JsonIgnore
     private Long id;
 
+    @NotBlank
     @Column(name = "name_food")
     private String nameFood;
 
+    @NotNull
     @Column(name = "quantity")
     private BigInteger quantity;
 }

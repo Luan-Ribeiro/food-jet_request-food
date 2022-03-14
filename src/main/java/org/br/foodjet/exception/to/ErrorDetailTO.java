@@ -1,10 +1,9 @@
-package org.br.foodjet.resource.response;
+package org.br.foodjet.exception.to;
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Data
 @RegisterForReflection

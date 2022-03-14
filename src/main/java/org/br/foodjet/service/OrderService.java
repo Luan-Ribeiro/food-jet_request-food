@@ -48,7 +48,7 @@ public class OrderService {
 
         OrderRequest order = orderRepository.findById(id);
         if (order == null) {
-            throw new BusinessException("OrderResource not found");
+            throw new BusinessException("Order resource not found");
         }
         return orderMapper.requestToResponse(order);
     }
@@ -63,9 +63,9 @@ public class OrderService {
         OrderResponseTO orderVerified = inventoryResource.verifyOrderAndFlushIngredients(
             orderMapper.toRequestTO(order));
         OrderStatusEnum orderStatus = orderVerified.getStatus();
-        if (orderStatus.equals(OrderStatusEnum.RECUSED)) {
-            throw new BusinessException("Order was refused by lack of ingredients");
-        }
+//        if (orderStatus.equals(OrderStatusEnum.RECUSED)) {
+//            throw new BusinessException("Order was refused by lack of ingredients");
+//        }
 
         var valueOrder = orderVerified.getValueTotal();
 

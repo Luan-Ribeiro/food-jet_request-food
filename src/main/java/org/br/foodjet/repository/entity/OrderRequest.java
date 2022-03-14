@@ -16,6 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.br.foodjet.constant.OrderStatusEnum;
 
@@ -30,6 +33,7 @@ public class OrderRequest extends PanacheEntityBase {
     @JsonIgnore
     private Long id;
 
+    @NotBlank
     @Column(name = "client_name")
     private String clientName;
 
@@ -49,9 +53,10 @@ public class OrderRequest extends PanacheEntityBase {
     @Column(name = "last_update_date")
     private String lastUpdateDate;
 
+    @Valid
+    @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private List<Item> items;
-
 
 }

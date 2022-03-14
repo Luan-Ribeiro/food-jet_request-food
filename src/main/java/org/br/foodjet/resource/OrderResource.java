@@ -5,6 +5,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -13,11 +14,13 @@ import javax.ws.rs.Produces;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.br.foodjet.repository.entity.OrderRequest;
+import org.br.foodjet.exception.to.ErrorDetailTO;
 import org.br.foodjet.resource.response.OrderResponse;
 import org.br.foodjet.service.OrderService;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.jboss.resteasy.annotations.jaxrs.QueryParam;
@@ -55,7 +58,7 @@ public class OrderResource {
             schema = @Schema(implementation = OrderResponse.class)
         )
     )
-    public OrderResponse findById(@PathParam("id") Long id) {
+    public OrderResponse findById(@NotNull @PathParam("id") Long id) {
         return orderService.findById(id);
     }
 
@@ -68,21 +71,33 @@ public class OrderResource {
         )
     )
     @Tag(name = "Order", description = "FoodJet")
-    public List<OrderResponse> listByName(@Valid @NotBlank @QueryParam("client_name") String clientName) {
+    public List<OrderResponse> listByName(@NotBlank @QueryParam("clientName") String clientName) {
         return orderService.findByName(clientName);
     }
 
     @POST
     @Tag(name = "Order", description = "FoodJet")
-    @APIResponse(
-        responseCode = "200",
-        content = @Content(
-            mediaType = APPLICATION_JSON,
-            schema = @Schema(implementation = OrderResponse.class)
-        )
+    @APIResponses(
+        value = {
+            @APIResponse(
+                responseCode = "200",
+                content = @Content(
+                    mediaType = APPLICATION_JSON,
+                    schema = @Schema(implementation = OrderResponse.class)
+                )
+            ),
+            @APIResponse(
+                responseCode = "500",
+                description = "Internal server error",
+                content = @Content(
+                    mediaType = APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorDetailTO.class)
+                )
+            )
+        }
     )
     @ResponseStatus(value = HttpStatus.SC_CREATED)
-    public OrderResponse create(OrderRequest order) {
+    public OrderResponse create(@Valid OrderRequest order) {
         return orderService.createOrder(order);
     }
 }
