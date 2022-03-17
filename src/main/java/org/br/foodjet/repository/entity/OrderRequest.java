@@ -21,11 +21,31 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.br.foodjet.constant.OrderStatusEnum;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Data
 @Entity
 @Transactional
 @Table(name = "order_request")
+@Schema(example = """
+    {
+      "clientName": "Pedrinho",
+      "items": [
+        {
+          "nameFood": "CHESSE_RIBS",
+          "quantity": 2
+        },
+        {
+          "nameFood": "CHESSE_SALAD",
+          "quantity": 1
+        },
+        {
+          "nameFood": "CHESSE_BAURU",
+          "quantity": 1
+        }
+      ]
+    }
+    """)
 public class OrderRequest extends PanacheEntityBase {
 
     @Id
@@ -48,10 +68,6 @@ public class OrderRequest extends PanacheEntityBase {
     @JsonIgnore
     @Column(name = "create_date")
     private String createDate;
-
-    @JsonIgnore
-    @Column(name = "last_update_date")
-    private String lastUpdateDate;
 
     @Valid
     @NotNull

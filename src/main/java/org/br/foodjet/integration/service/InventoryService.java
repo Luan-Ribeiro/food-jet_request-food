@@ -1,4 +1,4 @@
-package org.br.foodjet.integration;
+package org.br.foodjet.integration.service;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -14,6 +14,4 @@ public interface InventoryService {
     @PUT
     @Path("/ingredients")
     OrderResponseTO verifyIfOrderIsPossible(@RequestBody OrderRequestTO orderRequestTO);
-
-
 }

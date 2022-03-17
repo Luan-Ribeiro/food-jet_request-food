@@ -3,6 +3,7 @@ package org.br.foodjet.integration;
 import javax.inject.Inject;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import org.br.foodjet.integration.service.InventoryService;
 import org.br.foodjet.resource.response.OrderResponseTO;
 import org.br.foodjet.resource.to.OrderRequestTO;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;

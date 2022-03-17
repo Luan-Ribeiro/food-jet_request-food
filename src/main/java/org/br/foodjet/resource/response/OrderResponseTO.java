@@ -12,4 +12,6 @@ public class OrderResponseTO {
     private OrderStatusEnum status;
 
     private BigDecimal valueTotal;
+
+    private String reason;
 }

@@ -1,9 +1,13 @@
 package org.br.foodjet.service;
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.br.foodjet.constant.OrderStatusEnum;
@@ -29,10 +33,6 @@ public class OrderService {
     }
 
     public List<OrderResponse> findByName(String clientName) {
-        if (clientName == null) {
-            return null;
-        }
-
         List<OrderRequest> listName = orderRepository.findByName(clientName);
         if (listName.size() == 0) {
             throw new BusinessException("Resources not found");
@@ -42,40 +42,42 @@ public class OrderService {
     }
 
     public OrderResponse findById(Long id) {
-        if (id == null) {
-            return null;
-        }
 
         OrderRequest order = orderRepository.findById(id);
-        if (order == null) {
+        if (Objects.isNull(order)) {
             throw new BusinessException("Order resource not found");
         }
         return orderMapper.requestToResponse(order);
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest order) {
-        if (order == null) {
-            return null;
-        }
-
+    public Response createOrder(OrderRequest order) {
         Instant dateNow = Instant.now();
+
         OrderResponseTO orderVerified = inventoryResource.verifyOrderAndFlushIngredients(
             orderMapper.toRequestTO(order));
+
         OrderStatusEnum orderStatus = orderVerified.getStatus();
-//        if (orderStatus.equals(OrderStatusEnum.RECUSED)) {
-//            throw new BusinessException("Order was refused by lack of ingredients");
-//        }
+        if (orderStatus.equals(OrderStatusEnum.RECUSED)) {
+            OrderResponse orderResponse = OrderResponse.builder()
+                .clientName(order.getClientName())
+                .items(order.getItems())
+                .status(OrderStatusEnum.RECUSED)
+                .reason(orderVerified.getReason())
+                .build();
+            return Response.status(Status.BAD_REQUEST).entity(orderResponse).build();
+        }
 
         var valueOrder = orderVerified.getValueTotal();
 
         order.setCreateDate(dateNow.toString());
-        order.setLastUpdateDate(dateNow.toString());
         order.setValue(valueOrder);
         order.setStatus(orderStatus);
         orderRepository.saveOrder(order);
         orderRepository.saveItemsOrder(order.getItems());
 
-        return orderMapper.requestToResponse(order);
+        OrderResponse orderResponse = orderMapper.requestToResponse(order);
+
+        return Response.created(URI.create("/requestfood" + orderResponse.getId())).entity(orderResponse).build();
     }
 }

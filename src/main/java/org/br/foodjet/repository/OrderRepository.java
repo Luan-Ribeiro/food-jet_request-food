@@ -34,11 +34,6 @@ public class OrderRepository {
         order.persist();
     }
 
-    public void update(OrderRequest order) {
-        log.info("Update Order : {}", order);
-        order.persistAndFlush();
-    }
-
     public void saveItemsOrder(List<Item> items) {
         if (items == null) {
             return;
