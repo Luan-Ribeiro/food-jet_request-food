@@ -103,7 +103,7 @@ public class OrderResource {
     ))
     @APIResponse(responseCode = "400", description = "Bad Request", content = @Content(
         mediaType = APPLICATION_JSON,
-        schema = @Schema(implementation = ErrorDetailTO.class)
+        schema = @Schema(implementation = OrderResponse.class)
     ))
     @APIResponse(responseCode = "500", description = "Internal server error", content = @Content(
         mediaType = APPLICATION_JSON,

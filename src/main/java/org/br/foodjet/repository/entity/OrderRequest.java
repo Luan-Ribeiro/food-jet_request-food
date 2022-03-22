@@ -32,11 +32,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
       "clientName": "Pedrinho",
       "items": [
         {
-          "nameFood": "CHESSE_RIBS",
-          "quantity": 2
-        },
-        {
-          "nameFood": "CHESSE_SALAD",
+          "nameFood": "CHESSE_BURGUER",
           "quantity": 1
         },
         {
