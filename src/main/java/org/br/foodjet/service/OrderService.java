@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.br.foodjet.constant.OrderStatusEnum;
 import org.br.foodjet.exception.BusinessException;
 import org.br.foodjet.integration.InventoryResource;
+import org.br.foodjet.repository.ItemRepository;
 import org.br.foodjet.repository.OrderRepository;
 import org.br.foodjet.repository.entity.OrderRequest;
 import org.br.foodjet.resource.mapper.OrderMapper;
@@ -26,6 +27,7 @@ public class OrderService {
 
     private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
+    private final ItemRepository itemRepository;
     private final InventoryResource inventoryResource;
 
     public List<OrderResponse> listAllOrder() {
@@ -73,8 +75,8 @@ public class OrderService {
         order.setCreateDate(dateNow.toString());
         order.setValue(valueOrder);
         order.setStatus(orderStatus);
-        orderRepository.saveOrder(order);
-        orderRepository.saveItemsOrder(order.getItems());
+        orderRepository.save(order);
+        order.getItems().forEach(itemRepository::save);
 
         OrderResponse orderResponse = orderMapper.requestToResponse(order);
 

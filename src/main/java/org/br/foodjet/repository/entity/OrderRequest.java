@@ -42,7 +42,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
       ]
     }
     """)
-public class OrderRequest extends PanacheEntityBase {
+public class OrderRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

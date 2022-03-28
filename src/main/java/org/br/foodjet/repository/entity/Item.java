@@ -18,7 +18,7 @@ import lombok.Data;
 @Entity
 @Transactional
 @Table(name = "item")
-public class Item extends PanacheEntityBase {
+public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
