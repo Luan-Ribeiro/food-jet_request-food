@@ -36,7 +36,7 @@ public class OrderService {
 
     public List<OrderResponse> findByName(String clientName) {
         List<OrderRequest> listName = orderRepository.findByName(clientName);
-        if (listName.size() == 0) {
+        if (listName.isEmpty()) {
             throw new BusinessException("Resources not found");
         }
 
@@ -52,7 +52,6 @@ public class OrderService {
         return orderMapper.requestToResponse(order);
     }
 
-    @Transactional
     public Response createOrder(OrderRequest order) {
         Instant dateNow = Instant.now();
 
